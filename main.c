@@ -3,7 +3,7 @@
 //  SMMarble
 //
 //  Created by Juyeop Kim on 2023/11/05.
-//
+
 
 #include <time.h>
 #include <string.h>
@@ -42,6 +42,7 @@ static int player_position[MAX_PLAYER];
 static char player_name[MAX_PLAYER][MAX_CHARNAME];
 #endif
 
+
 //function prototypes
 #if 0
 int isGraduated(void); //check if any player is graduated
@@ -51,9 +52,7 @@ void printPlayerStatus(void); //print all player status at the beginning of each
 float calcAverageGrade(int player); //calculate average grade of the player
 smmGrade_e takeLecture(int player, char* lectureName, int credit); //take the lecture (insert a grade of the player)
 void* findGrade(int player, char* lectureName); //find the grade from the player's grade history
-void printGrades(int player); //print all the grade history of the player
 #endif
-
 
 void printPlayerStatus(void)
 {
@@ -100,11 +99,13 @@ int rolldie(int player)
     c = getchar();
     fflush(stdin);
 
-#if 0
+    //# if0 endif 없앰.
+    //# g 버튼 눌렀을 때 
     if (c == 'g')
-        printGrades(player);
-#endif
+        //retuern 0;
+        //printGrades(player); // 함수 정의 필요 # Q. rolldie에서 player매개변수는 오직 이 코드를 위함인가?
 
+    // # g 버튼 이외 눌렀을 때 
     return (rand() % MAX_DIE + 1);
 }
 
@@ -117,10 +118,9 @@ void actionNode(int player)
     {
         //case lecture:
     case SMMNODE_TYPE_LECTURE:
-        if
-            cur_player[player].accumCredit += smmObj_getNodeCredit(cur_player[player].position);
-        cur_player[player].energy -= smmObj_getNodeEnergy(cur_player[player].position);
-        break;
+    {cur_player[player].accumCredit += smmObj_getNodeCredit(cur_player[player].position);
+    cur_player[player].energy -= smmObj_getNodeEnergy(cur_player[player].position); }
+    break; 
 
     default:
         break;
@@ -136,17 +136,21 @@ void goForward(int player, int step)
         smmObj_getNodeName(cur_player[player].position));
 }
 
-// # 게임 종료 조건
-boolean isGraduated() {
-    for(int i=0; i<MAX_PLAYER;i++){
-        if (cur_player[i].flag_graduate == 1) {
-            return true;
-        }
+// # 게임 종료 조건 
+// : graduate_credit 이상의 학점 이수
+// -> 한 턴? 플레이어 한 명 돌때마다 확인?
+int isGraduated(int turn) { // c에서는 boolean대신 0,1 값 사용해야함 
+    if (cur_player[turn].accumCredit > GRADUATE_CREDIT)
+    {
+        printf("%s 가 졸업학점을 충족하여 졸업합니다. 게임을 종료합니다.", cur_player[turn].name);
+        return 1;
+    }
+    return 0;
         
     }
     
 
-}
+
 
 
 
@@ -187,7 +191,7 @@ int main(int argc, const char* argv[]) {
         board_nr++;
     }
     fclose(fp);
-    printf("Total number of board nodes : %i\n", board_nr);
+    printf("Total number of board nodes : %i\n", board_nr); //보드 노드 개수
 
 
     for (i = 0; i < board_nr; i++)
@@ -240,7 +244,7 @@ int main(int argc, const char* argv[]) {
         //input player number to player_nr
         printf("input player no.:");
         scanf("%d", &player_nr);
-        fflush(stdin);
+        fflush(stdin); //스트림 비우기
     } while (player_nr < 0 || player_nr >  MAX_PLAYER);
 
     generatePlayers(player_nr, initEnergy);
@@ -269,8 +273,9 @@ int main(int argc, const char* argv[]) {
 
         //4-5. next turn
         turn = (turn + 1) % player_nr;
-        //종료조건
-        if (isGraduated() == true) break;//graduated시 반복문 종료 
+        // # 종료조건
+        //
+        if (isGraduated(turn) == 1) break;//graduated시 반복문 종료 -> 반복문 탈출하여 게임 종료되는지 확인
     }
 
     system("PAUSE");
