@@ -5,9 +5,10 @@
 //  Created by Juyeop Kim on 2023/11/05.
 //
 
-#include "smm_common_h";
-#include "smm_object_h";
+#include "smm_common.h";
+#include "smm_object.h";
 #include <stdio.h>
+#include <stdlib.h>
 
 #define MAX_TYPE 7
 #define MAX_GRADE 9
@@ -54,11 +55,11 @@ void smmObj_genNode(char* name, int type, int credit, int energy) { //문자는 cha
         smm_node[smmObject_noNode].credit = credit;
         smm_node[smmObject_noNode].energy = energy;
 
-        smmObj_noNode++;//node번호 +1 
+        smmObject_noNode++;//node번호 +1 
 }
 //getNodeName
 char* smmObj_getNodeName(int node_nr) { //noNode아님 node_nr로 새 변수 선언필요
-    return smm_node[int node_nr];
+    return smm_node[node_nr].name;
 }
 // 
 //getNodeType
